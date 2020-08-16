@@ -41,3 +41,10 @@ services:
     networks:
       - planet-link
 ```
+
+then,
+
+```bash
+docker-comopse build
+docker-comopse up -d
+```
