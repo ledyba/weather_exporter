@@ -69,7 +69,7 @@ groups:
   - name: Weather
     rules:
     - alert: HyperHot
-      expr: wether_air_temp{location='Tokyo'} >= 303 # in Kelvin.
+      expr: weather_air_temp{location='Tokyo'} >= 303 # in Kelvin.
       for: 60s
       labels:
         severity: warning
