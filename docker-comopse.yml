@@ -1,0 +1,23 @@
+---
+version: '3.7'
+
+services:
+  mon:
+    container_name: weather_mon
+    hostname: weather_mon
+    image: weather_exporter
+    build:
+      context: ./
+    restart: always
+    networks:
+      - planet-link
+    logging:
+      driver: "json-file"
+      options:
+        max-file: '4'
+        max-size: '250m'
+networks:
+  planet-link:
+    external:
+      name: planet-link
+
