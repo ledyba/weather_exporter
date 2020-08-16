@@ -40,20 +40,20 @@ fn render(resp: &api::Response) -> String {
   format!(r###"
 # {location}
 ## temp/humidity
-wether_temp{{location={location}}} {temp}
-wether_humidity{{location={location}}} {humidity}
-wether_humidity{{location={location}}} {pressure}
+wether_temp{{planet="Earth", location="{location}"}} {temp}
+wether_humidity{{planet="Earth", location="{location}"}} {humidity}
+wether_humidity{{planet="Earth", location="{location}"}} {pressure}
 
 ## clouds
-wether_clouds{{location={location}}} {clouds}
+wether_clouds{{planet="Earth", location="{location}"}} {clouds}
 
 ## wind
-wether_wind_speed{{location={location}}} {wind_speed}
-wether_wind_deg{{location={location}}} {wind_deg}
+wether_wind_speed{{planet="Earth", location="{location}"}} {wind_speed}
+wether_wind_deg{{planet="Earth", location="{location}"}} {wind_deg}
 
 ## sun
-wether_sunrise{{location={location}}} {sunrise}
-wether_sunset{{location={location}}} {sunset}
+wether_sunrise{{planet="Earth", location="{location}"}} {sunrise}
+wether_sunset{{planet="Earth", location="{location}"}} {sunset}
 "###,
           location=resp.name,
           temp=resp.main.temp,
