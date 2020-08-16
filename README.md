@@ -38,8 +38,6 @@ services:
       - '8080'
     restart: always
     command: "web --listen '0.0.0.0:8080' --app-id <app id> 'Tokyo,JP' 'Saitama,JP' 'Kyoto,JP' 'Osaka,JP'"
-    networks:
-      - planet-link
 ```
 
 then,
