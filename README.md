@@ -46,3 +46,34 @@ then,
 docker-comopse build
 docker-comopse up -d
 ```
+
+## Monitoring from Prometheus
+
+### Scraping config
+
+```yaml
+scrape_configs:
+  - job_name: 'weather_exporter'
+    scrape_interval: '60s'
+    metrics_path: '/'
+    static_configs:
+      - targets:
+        - 'weather_exporter:8080'
+```
+
+### Alert example
+
+```yaml
+---
+groups:
+  - name: Weather
+    rules:
+    - alert: HyperHot
+      expr: weather_temp{location='Tokyo'} >= 303 # in Kelvin.
+      for: 60s
+      labels:
+        severity: warning
+      annotations:
+        summary: It's too hot for humans.
+        description: Take a rest. Don't run arround Imperial Palace.
+```
