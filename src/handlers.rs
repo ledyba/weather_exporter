@@ -42,41 +42,41 @@ fn render(resp: &api::Response) -> String {
 
 ## Air
 
-#HELP wetaher_air_temp Air temperature in Kelvin.
-#TYPE wetaher_air_temp guage
-wetaher_air_temp{{planet="Earth", location="{location}"}} {temp}
+#HELP weather_air_temp Air temperature in Kelvin.
+#TYPE weather_air_temp guage
+weather_air_temp{{planet="Earth", location="{location}"}} {temp}
 
-#HELP wetaher_air_humidity Air himidity in percentage.
-#TYPE wetaher_air_humidity guage
-wetaher_air_humidity{{planet="Earth", location="{location}"}} {humidity}
+#HELP weather_air_humidity Air himidity in percentage.
+#TYPE weather_air_humidity guage
+weather_air_humidity{{planet="Earth", location="{location}"}} {humidity}
 
 #HELP sensor_air_pressure Air pressure in hectopascals (hPa)
 #TYPE sensor_air_pressure guage
-wetaher_air_pressure{{planet="Earth", location="{location}"}} {pressure}
+weather_air_pressure{{planet="Earth", location="{location}"}} {pressure}
 
 ## Cloud
 
-#HELP wetaher_clouds Cloudiness in percentage.
-#TYPE wetaher_clouds guage
-wetaher_clouds{{planet="Earth", location="{location}"}} {clouds}
+#HELP weather_clouds Cloudiness in percentage.
+#TYPE weather_clouds guage
+weather_clouds{{planet="Earth", location="{location}"}} {clouds}
 
 ## Wind
 
-#HELP wetaher_wind_speed Wind speed. meter/sec.
-#TYPE wetaher_wind_speed guage
-wetaher_wind_speed{{planet="Earth", location="{location}"}} {wind_speed}
-#HELP wetaher_wind_deg Wind direction, degrees (meteorological).
-#TYPE wetaher_wind_deg guage
-wetaher_wind_deg{{planet="Earth", location="{location}"}} {wind_deg}
+#HELP weather_wind_speed Wind speed. meter/sec.
+#TYPE weather_wind_speed guage
+weather_wind_speed{{planet="Earth", location="{location}"}} {wind_speed}
+#HELP weather_wind_deg Wind direction, degrees (meteorological).
+#TYPE weather_wind_deg guage
+weather_wind_deg{{planet="Earth", location="{location}"}} {wind_deg}
 
 ## Sun
 
-#HELP wetaher_sunrise Sunrise time, unix, UTC
-#TYPE wetaher_sunrise guage
-wetaher_sunrise{{planet="Earth", location="{location}"}} {sunrise}
-#HELP wetaher_sunset Sunset time, unix, UTC
-#TYPE wetaher_sunset guage
-wetaher_sunset{{planet="Earth", location="{location}"}} {sunset}
+#HELP weather_sunrise Sunrise time, unix, UTC
+#TYPE weather_sunrise guage
+weather_sunrise{{planet="Earth", location="{location}"}} {sunrise}
+#HELP weather_sunset Sunset time, unix, UTC
+#TYPE weather_sunset guage
+weather_sunset{{planet="Earth", location="{location}"}} {sunset}
 "####,
           location=resp.name,
           temp=resp.main.temp,
