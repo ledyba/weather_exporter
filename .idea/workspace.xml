@@ -13,8 +13,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4b99505b-514a-4bee-8530-7a53581a1a7f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.dockerignore" beforeDir="false" afterPath="$PROJECT_DIR$/.dockerignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -119,10 +118,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="3294" y="1790" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1597596230159">
+    <state x="3294" y="1790" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1597601750029">
       <screen x="2560" y="1440" width="2560" height="1440" />
     </state>
-    <state x="3294" y="1790" key="#com.intellij.execution.impl.EditConfigurationsDialog/2560.1440.2560.1440/0.1440.2560.1440/0.0.2560.1440/5120.1440.2560.1440/5120.0.2560.1440/2560.0.2560.1440@2560.1440.2560.1440" timestamp="1597596230159" />
+    <state x="3294" y="1790" key="#com.intellij.execution.impl.EditConfigurationsDialog/2560.1440.2560.1440/0.1440.2560.1440/0.0.2560.1440/5120.1440.2560.1440/5120.0.2560.1440/2560.0.2560.1440@2560.1440.2560.1440" timestamp="1597601750029" />
     <state x="3601" y="1810" width="468" height="704" key="#com.intellij.ide.util.MemberChooser" timestamp="1597597395234">
       <screen x="2560" y="1440" width="2560" height="1440" />
     </state>

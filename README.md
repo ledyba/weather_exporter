@@ -75,5 +75,5 @@ groups:
         severity: warning
       annotations:
         summary: It's too hot for humans.
-        description: Take a rest. Don't run arround Imperial Palace.
+        description: Take a rest. Don't run arround the Imperial Palace.
 ```
