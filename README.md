@@ -15,7 +15,10 @@ cargo build --release
 then run,
 
 ```bash
-target/release/weather_exporter --listen ':8080' --app-id "<app id>" 'Tokyo,JP' 'Saitama,JP' 'Kyoto,JP' 'Osaka,JP'
+target/release/weather_exporter web \
+  --listen '0.0.0.0:8080' \
+  --app-id "<app id>" \
+  'Tokyo,JP' 'Saitama,JP' 'Kyoto,JP' 'Osaka,JP'
 ```
 
 ### Using docker
@@ -31,8 +34,10 @@ services:
     image: weather_exporter
     build:
       context: ./
+    expose:
+      - '8080'
     restart: always
-    command: "--listen ':8080' --app-id <app id> 'Tokyo,JP' 'Saitama,JP' 'Kyoto,JP' 'Osaka,JP'"
+    command: "web --listen '0.0.0.0:8080' --app-id <app id> 'Tokyo,JP' 'Saitama,JP' 'Kyoto,JP' 'Osaka,JP'"
     networks:
       - planet-link
 ```
