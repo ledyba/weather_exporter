@@ -9,7 +9,7 @@ Prometheus exporter for weather. Yeah, the weathers on your earth.
 
 First, please sign up [OpenWetherMap](https://home.openweathermap.org/) and get an app id. Free plan is enough.
 
-### Manyally
+### with Cargo
 
 ```bash
 cargo build --release
@@ -24,7 +24,7 @@ target/release/weather_exporter web \
   'Tokyo,JP' 'Saitama,JP' 'Kyoto,JP' 'Osaka,JP'
 ```
 
-### Using docker
+### with Docker
 
 Write a docker-compose.yml like:
 
