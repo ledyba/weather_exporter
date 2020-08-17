@@ -22,7 +22,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: weather_exporter
-          path: artivacts/weather_exporter
+          path: artifacts/weather_exporter
       - name: Inspect disk usage
         shell: bash
         run: du -sh .
