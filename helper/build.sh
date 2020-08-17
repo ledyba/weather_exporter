@@ -6,4 +6,4 @@ cd ${PROJ_PATH}/..
 mkdir -p artifacts
 
 docker-compose build
-docker run -i -v ${PWD}/artifacts:/artifacts weather_exporter cp /weather_exporter /artifacts
+docker run --rm -v ${PWD}/artifacts:/artifacts weather_exporter --entrypoint="cp /weather_exporter /artifacts"
