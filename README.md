@@ -46,7 +46,7 @@ services:
 then,
 
 ```bash
-docker-comopse build
+docker-comopse build # It takes long time. Be patient....
 docker-comopse up -d
 ```
 
@@ -72,11 +72,19 @@ groups:
   - name: Weather
     rules:
     - alert: HyperHot
+      expr: weather_air_temp{location='Tokyo'} >= 308 # in Kelvin.
+      for: 60s
+      labels:
+        severity: 'critical'
+      annotations:
+        summary: It's too hot for humans.
+        description: Stay home. Keep the air conditioner on.
+    - alert: SuperHot
       expr: weather_air_temp{location='Tokyo'} >= 303 # in Kelvin.
       for: 60s
       labels:
-        severity: warning
+        severity: 'warning'
       annotations:
-        summary: It's too hot for humans.
+        summary: It's too hot to do exercises.
         description: Take a rest. Don't run arround the Imperial Palace.
 ```
