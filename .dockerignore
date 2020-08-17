@@ -1,5 +1,5 @@
-/target/
-/docker-compose.yml
-/Dockerfile
-/README.md
-/.idea
+target/
+docker-compose.yml
+Dockerfile
+README.md
+.idea/
