@@ -79,7 +79,7 @@ groups:
       annotations:
         summary: It's too hot for humans.
         description: Stay home. Keep the air conditioner on.
-    - alert: SuperHot
+    - alert: HyperHot
       expr: weather_air_temp{location='Tokyo'} >= 303 # in Kelvin.
       for: 60s
       labels:
