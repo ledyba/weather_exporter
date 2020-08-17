@@ -58,7 +58,7 @@ pub async fn fetch(ctx: Arc<Context>, location: String) -> Result<Response, Box<
       Box::new(err)
     })?;
   ctx.cache.write().unwrap()
-    .insert_with_ttl(location, resp.clone(), Duration::from_secs(60))
+    .insert_with_ttl(location, resp.clone(), Duration::from_secs(15))
     .map(|_| resp)
     .map_err(|_| static_err("Failed to write to cache"))
 }
