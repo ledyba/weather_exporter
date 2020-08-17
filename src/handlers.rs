@@ -13,28 +13,9 @@ use warp::reply::Reply;
 use warp::reject;
 use warp::http::uri;
 
-use std::sync::RwLock;
-use once_cell::sync::Lazy;
-use config::Config;
-
 use crate::api;
-
-static CONFIG: Lazy<RwLock<Config>> = Lazy::new(|| RwLock::new(Config::default()));
-
-pub fn set_locations(locations: Vec<String>) -> Result<(), Box<dyn std::error::Error>> {
-  CONFIG
-    .write().expect("cannot lock")
-    .set::<Vec<String>>("locations", locations)
-    .map(|_| ())
-    .map_err(|err| err.into())
-}
-
-fn get_locations() -> Vec<String> {
-  CONFIG
-    .read().expect("cannot lock")
-    .get_array("locations").unwrap_or(vec![])
-    .iter().map(|v| v.to_string()).collect()
-}
+use crate::config::Config;
+use std::sync::Arc;
 
 fn render(resp: &api::Response) -> String {
   format!(r####"
@@ -90,8 +71,9 @@ weather_sunset{{planet="Earth", location="{location}"}} {sunset}
   )
 }
 
-pub async fn index() -> Result<impl Reply, reject::Rejection> {
-  let result = api::fetch_all(&get_locations()).await;
+pub async fn index(conf: Arc<Config>) -> Result<impl Reply, reject::Rejection>
+{
+  let result = api::fetch_all(&conf.app_id, &conf.locations).await;
   match result {
     Ok(responses) => {
       let resp: Vec<String> = responses.iter().map(render).collect();

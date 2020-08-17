@@ -9,9 +9,11 @@ use std::process::exit;
 use clap::{App, Arg, SubCommand, ArgMatches};
 use warp::Filter;
 use std::str::FromStr;
+use std::sync::Arc;
 
 mod api;
 mod handlers;
+mod config;
 
 fn web(m: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
   let sock = if let Some(listen) = m.value_of("listen") {
@@ -20,17 +22,10 @@ fn web(m: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
     return Err("listen is not set.".into())
   };
 
-  if let Some(app_id) = m.value_of("app_id") {
-    api::set_app_id(app_id)?;
-  } else {
-    return Err("app-id is not set.".into())
-  }
-
-  if let Some(locations) = m.values_of("LOCATIONS") {
-    handlers::set_locations(locations.map(|s| s.to_string()).collect())?;
-  } else {
-    return Err("app-id is not set.".into())
-  }
+  let cfg = Arc::new(config::Config{
+    app_id: m.value_of("app_id").expect("app-id is not set.").to_string(),
+    locations: m.values_of("LOCATIONS").expect("location is not set.").map(|s| s.to_string()).collect(),
+  });
 
   let mut rt = tokio::runtime::Builder::new()
     .core_threads(32)
@@ -39,10 +34,10 @@ fn web(m: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
     .build()
     .unwrap();
 
-  let router = warp::path::end().and_then(handlers::index)
-    .or(warp::any().and_then(handlers::not_found));
-
-  rt.block_on(async {
+  rt.block_on(async move {
+    let index = move || handlers::index(cfg.clone());
+    let router = warp::path::end().and_then(index)
+      .or(warp::any().and_then(handlers::not_found));
     warp::serve(router)
       .run(sock)
       .await;

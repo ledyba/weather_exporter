@@ -4,25 +4,13 @@
  *
  * Copyright 2020-, Kaede Fujisaki
  *****************************************************************************/
-use std::sync::RwLock;
-use once_cell::sync::Lazy;
-use config::Config;
 use serde::{Serialize, Deserialize};
 use serde::export::Formatter;
 
-static CONFIG: Lazy<RwLock<Config>> = Lazy::new(|| RwLock::new(Config::default()));
-
-pub fn set_app_id(app_id: &str) -> Result<(), Box<dyn std::error::Error>>  {
-  CONFIG
-    .write().expect("cannot lock")
-    .set("app_id", app_id.to_string())
-    .map(|_| ())
-    .map_err(|err| err.into())
-}
-
-pub async fn fetch_all(places: &Vec<String>) -> Result<Vec<Response>, Box<dyn std::error::Error>> {
+pub async fn fetch_all(app_id: &String, places: &Vec<String>) -> Result<Vec<Response>, Box<dyn std::error::Error>>
+{
   let mut result = Vec::new();
-  for resp in places.iter().map(|place| fetch(place)) {
+  for resp in places.iter().map(|place| fetch(app_id, place)) {
     result.push(resp.await?);
   }
   Ok(result)
@@ -45,9 +33,7 @@ impl std::fmt::Display for FetchError {
   }
 }
 
-pub async fn fetch(location: &str) -> Result<Response, Box<dyn std::error::Error>> {
-  let app_id: String = CONFIG.read().unwrap().get("app_id").expect("No APP_ID");
-
+pub async fn fetch<'a, 'b>(app_id: &'a String, location: &'a String) -> Result<Response, Box<dyn std::error::Error>> {
   let url = format!("https://api.openweathermap.org/data/2.5/weather?q={}&appid={}", location, app_id);
   let body = reqwest::get(url.as_str())
     .await?
@@ -121,7 +107,7 @@ pub struct Sys {
 pub struct Response {
   pub coord: Coord,
   pub weather: Vec<Weather>,
-  pub base: String,
+  base: String,
   pub main: Main,
   pub visibility: f64,
   pub wind: Wind,
@@ -132,7 +118,7 @@ pub struct Response {
   pub timezone: i32,
   pub id: u32,
   pub name: String,
-  cod: u32
+  cod: u32,
 }
 
 
