@@ -9,11 +9,11 @@ use std::process::exit;
 use clap::{App, Arg, SubCommand, ArgMatches};
 use warp::Filter;
 use std::str::FromStr;
-use std::sync::Arc;
+use std::sync::{Arc, RwLock};
 
 mod api;
 mod handlers;
-mod config;
+mod context;
 
 fn web(m: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
   let sock = if let Some(listen) = m.value_of("listen") {
@@ -22,9 +22,10 @@ fn web(m: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
     return Err("listen is not set.".into())
   };
 
-  let cfg = Arc::new(config::Config{
+  let cfg = Arc::new(context::Context {
     app_id: m.value_of("app_id").expect("app-id is not set.").to_string(),
     locations: m.values_of("LOCATIONS").expect("location is not set.").map(|s| s.to_string()).collect(),
+    cache: RwLock::new(cascara::Cache::with_window_size(100, 20)),
   });
 
   let mut rt = tokio::runtime::Builder::new()

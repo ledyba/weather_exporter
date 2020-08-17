@@ -14,11 +14,11 @@ use warp::reject;
 use warp::http::uri;
 
 use crate::api;
-use crate::config::Config;
+use crate::context::Context;
 use std::sync::Arc;
 
 fn render(resp: &api::Response) -> String {
-  format!(r####"
+  let mut body = format!(r####"
 ### {location}
 
 ## Air
@@ -68,12 +68,65 @@ weather_sunset{{planet="Earth", location="{location}"}} {sunset}
           wind_deg=resp.wind.deg,
           sunrise=resp.sys.sunrise,
           sunset=resp.sys.sunset,
-  )
+  );
+  if let Some(rain) = &resp.rain {
+    if let Some(value) = rain.value_1h {
+      body = format!(r####"
+{body}
+
+#HELP weather_rain_1h Rain volume for the last 1 hour, mm
+#TYPE weather_rain_1h guage
+weather_rain_1h{{planet="Earth", location="{location}"}} {value}
+"####,
+                     body=body,
+                     location=resp.name,
+                     value=value)
+    }
+    if let Some(value) = rain.value_3h {
+      body = format!(r####"
+{body}
+
+#HELP weather_rain_3h Rain volume for the last 3 hour, mm
+#TYPE weather_rain_3h guage
+weather_rain_3h{{planet="Earth", location="{location}"}} {value}
+"####,
+                     body=body,
+                     location=resp.name,
+                     value=value)
+    }
+  }
+  if let Some(snow) = &resp.snow {
+    if let Some(value) = snow.value_1h {
+      body = format!(r####"
+{body}
+
+#HELP weather_snow_1h Snow volume for the last 1 hour, mm
+#TYPE weather_snow_1h guage
+weather_snow_1h{{planet="Earth", location="{location}"}} {value}
+"####,
+                     body=body,
+                     location=resp.name,
+                     value=value)
+    }
+    if let Some(value) = snow.value_3h {
+      body = format!(r####"
+{body}
+
+#HELP weather_snow_3h Snow volume for the last 3 hour, mm
+#TYPE weather_snow_3h guage
+weather_snow_3h{{planet="Earth", location="{location}"}} {value}
+"####,
+                     body=body,
+                     location=resp.name,
+                     value=value)
+    }
+  }
+  body
 }
 
-pub async fn index(conf: Arc<Config>) -> Result<impl Reply, reject::Rejection>
+pub async fn index(conf: Arc<Context>) -> Result<impl Reply, reject::Rejection>
 {
-  let result = api::fetch_all(&conf.app_id, &conf.locations).await;
+  let result = api::fetch_all(conf).await;
   match result {
     Ok(responses) => {
       let resp: Vec<String> = responses.iter().map(render).collect();

@@ -5,8 +5,11 @@
  * Copyright 2020-, Kaede Fujisaki
  *****************************************************************************/
 
-#[derive(Debug, Clone)]
-pub struct Config {
+use crate::api::Response;
+use std::sync::RwLock;
+
+pub struct Context {
   pub app_id: String,
   pub locations: Vec<String>,
+  pub cache: RwLock<cascara::Cache<String, Response>>,
 }
