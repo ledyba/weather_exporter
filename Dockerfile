@@ -1,7 +1,7 @@
 FROM ekidd/rust-musl-builder as builder
 
 WORKDIR /home/rust/src
-COPY . .
+COPY --chown=rust:rust . .
 
 RUN cargo build --release --target=x86_64-unknown-linux-musl
 
