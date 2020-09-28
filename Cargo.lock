@@ -1736,6 +1736,7 @@ version = "0.1.0"
 dependencies = [
  "cascara",
  "clap",
+ "num_cpus",
  "reqwest",
  "serde",
  "serde_json",

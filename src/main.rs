@@ -28,8 +28,10 @@ fn web(m: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
     cache: RwLock::new(cascara::Cache::with_window_size(100, 20)),
   });
 
+  let cores = num_cpus::get();
+
   let mut rt = tokio::runtime::Builder::new()
-    .core_threads(32)
+    .core_threads(cores + 1)
     .threaded_scheduler()
     .enable_all()
     .build()
