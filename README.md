@@ -83,7 +83,7 @@ Please access to `http://localhost:8080/probe?app-id=<app-id>&target=Tokyo,JP`.
       - target_label: __address__
         replacement: 'weather_exporter:8080'
     params:
-      app-id: '6f2bbbdbb606f96a81a30961e8cc0d61'
+      app-id: '<app-id>'
     static_configs:
       - targets:
           - 'Tokyo,JP'

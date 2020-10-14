@@ -37,19 +37,17 @@ fn web(m: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
     .unwrap();
 
   rt.block_on(async move {
-    let probe = warp::path::path("probe")
-      .and(warp::path::end())
-      .and(warp::query())
-      .and_then({
-        let ctx = ctx.clone();
-        move |p: handlers::ProbeParams| handlers::probe(ctx.clone(), p)
-      })
-      .or(warp::any().and_then(handlers::bad_request));
+    let probe = warp::path::path("probe").and(
+      warp::any()
+        .and(warp::path::end())
+        .and(warp::query())
+        .and_then({
+          let ctx = ctx.clone();
+          move |p: handlers::ProbeParams| handlers::probe(ctx.clone(), p)
+        })
+        .or(warp::any().and_then(handlers::bad_request)));
     let index = warp::path::end().and_then(handlers::index);
-    let router =
-      probe
-        .or(index)
-        .or(warp::any().and_then(handlers::not_found));
+    let router = probe.or(index).or(warp::any().and_then(handlers::not_found));
     warp::serve(router)
       .run(sock)
       .await;
