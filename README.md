@@ -4,6 +4,7 @@
 [![Build on macOS](https://github.com/ledyba/weather_exporter/workflows/Build%20on%20macOS/badge.svg)](https://github.com/ledyba/weather_exporter/actions?query=workflow%3A%22Build+on+macOS%22)
 [![Build on Windows](https://github.com/ledyba/weather_exporter/workflows/Build%20on%20Windows/badge.svg)](https://github.com/ledyba/weather_exporter/actions?query=workflow%3A%22Build+on+Windows%22)  
 [![Build single binary on Linux](https://github.com/ledyba/weather_exporter/workflows/Build%20single%20binary%20on%20Linux/badge.svg)](https://github.com/ledyba/weather_exporter/actions?query=workflow%3A%22Build+single+binary+on+Linux%22)
+[![Publish Docker image](https://github.com/ledyba/weather_exporter/workflows/Publish%20Docker%20image/badge.svg)](https://github.com/ledyba/weather_exporter/actions?query=workflow%3A%22Publish+Docker+image%22)
 
 Prometheus exporter for weather. Yeah, the weathers on your earth.
 
@@ -35,6 +36,9 @@ version: '3.7'
 
 services:
   weather_exporter:
+    # from Github Container Registry
+    image: ghcr.io/ledyba/weather_exporter:latest
+    # from source
     image: weather_exporter
     build:
       context: ./
