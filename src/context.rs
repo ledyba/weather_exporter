@@ -10,6 +10,5 @@ use std::sync::RwLock;
 
 pub struct Context {
   pub app_id: String,
-  pub locations: Vec<String>,
   pub cache: RwLock<cascara::Cache<String, Response>>,
 }

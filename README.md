@@ -22,8 +22,7 @@ then run,
 ```bash
 target/release/weather_exporter web \
   --listen '0.0.0.0:8080' \
-  --app-id "<app id>" \
-  'Tokyo,JP' 'Saitama,JP' 'Kyoto,JP' 'Osaka,JP'
+  --app-id "<app id>" # app-id is optional.
 ```
 
 ### with Docker
@@ -42,7 +41,13 @@ services:
     expose:
       - '8080'
     restart: always
-    command: "web --listen '0.0.0.0:8080' --app-id <app id> 'Tokyo,JP' 'Saitama,JP' 'Kyoto,JP' 'Osaka,JP'"
+    command: 
+      - 'web'
+      - '--listen'
+      - '0.0.0.0:8080'
+      # app-id is optional
+      - '--app-id'
+      - '<app id>'
 ```
 
 then,
@@ -52,18 +57,35 @@ docker-comopse build # It takes long time. Be patient....
 docker-comopse up -d
 ```
 
+## Check from browsers
+
+Please access to `http://localhost:8080/probe?app-id=<app-id>&target=Tokyo,JP`.
+
+`app-id` is not required if you set `--app-id <app-id>` as command line flag.
+
 ## Monitoring from Prometheus
 
 ### Scraping config
 
 ```yaml
-scrape_configs:
   - job_name: 'weather_exporter'
     scrape_interval: '60s'
-    metrics_path: '/'
+    metrics_path: '/probe'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: 'weather_exporter:8080'
+    params:
+      app-id: '6f2bbbdbb606f96a81a30961e8cc0d61'
     static_configs:
       - targets:
-        - 'weather_exporter:8080'
+          - 'Tokyo,JP'
+          - 'Saitama,JP'
+          - 'Kyoto,JP'
+          - 'Osaka,JP'
 ```
 
 ### Alert example

@@ -5,13 +5,13 @@
  * Copyright 2020-, Kaede Fujisaki
  *****************************************************************************/
 
-extern crate warp;
+extern crate serde;
+use serde::Deserialize;
 
-use std::str::FromStr;
+extern crate warp;
 
 use warp::reply::Reply;
 use warp::reject;
-use warp::http::uri;
 
 use crate::api;
 use crate::context::Context;
@@ -73,7 +73,6 @@ weather_sunset{{planet="Earth", location="{location}"}} {sunset}
     if let Some(value) = rain.value_1h {
       body = format!(r####"
 {body}
-
 #HELP weather_rain_1h Rain volume for the last 1 hour, mm
 #TYPE weather_rain_1h guage
 weather_rain_1h{{planet="Earth", location="{location}"}} {value}
@@ -85,7 +84,6 @@ weather_rain_1h{{planet="Earth", location="{location}"}} {value}
     if let Some(value) = rain.value_3h {
       body = format!(r####"
 {body}
-
 #HELP weather_rain_3h Rain volume for the last 3 hour, mm
 #TYPE weather_rain_3h guage
 weather_rain_3h{{planet="Earth", location="{location}"}} {value}
@@ -99,7 +97,6 @@ weather_rain_3h{{planet="Earth", location="{location}"}} {value}
     if let Some(value) = snow.value_1h {
       body = format!(r####"
 {body}
-
 #HELP weather_snow_1h Snow volume for the last 1 hour, mm
 #TYPE weather_snow_1h guage
 weather_snow_1h{{planet="Earth", location="{location}"}} {value}
@@ -111,7 +108,6 @@ weather_snow_1h{{planet="Earth", location="{location}"}} {value}
     if let Some(value) = snow.value_3h {
       body = format!(r####"
 {body}
-
 #HELP weather_snow_3h Snow volume for the last 3 hour, mm
 #TYPE weather_snow_3h guage
 weather_snow_3h{{planet="Earth", location="{location}"}} {value}
@@ -124,13 +120,53 @@ weather_snow_3h{{planet="Earth", location="{location}"}} {value}
   body
 }
 
-pub async fn index(conf: Arc<Context>) -> Result<impl Reply, reject::Rejection>
+#[derive(Debug, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ProbeParams {
+  #[serde(rename = "target", skip_serializing_if = "Option::is_none")]
+  pub location: Option<String>,
+  #[serde(rename = "app-id", skip_serializing_if = "Option::is_none")]
+  pub app_id: Option<String>,
+}
+
+pub async fn index() -> Result<impl Reply, reject::Rejection>
 {
-  let result = api::fetch_all(conf).await;
+  let resp = warp::http::Response::builder()
+    .status(500)
+    .header("Content-Type", "text/plain;charset=UTF-8")
+    .body("Weather Exporter")
+    .unwrap();
+  Ok(resp)
+}
+
+pub async fn probe(ctx: Arc<Context>, params: ProbeParams) -> Result<impl Reply, reject::Rejection>
+{
+  let app_id  = if params.app_id.is_some() {
+    params.app_id.unwrap().clone()
+  } else {
+    ctx.app_id.clone()
+  };
+  if app_id.is_empty() {
+    let resp = warp::http::Response::builder()
+      .status(402)
+      .header("Content-Type", "text/plain;charset=UTF-8")
+      .body("app id is not given!".to_string())
+      .unwrap();
+    return Ok(resp);
+  }
+  if params.location.is_none() {
+    let resp = warp::http::Response::builder()
+      .status(404)
+      .header("Content-Type", "text/plain;charset=UTF-8")
+      .body("Empty location is not found, by definition...".to_string())
+      .unwrap();
+    return Ok(resp);
+  }
+  let location = params.location.unwrap().clone();
+  let result = api::fetch(ctx.clone(), app_id, location).await;
   match result {
     Ok(responses) => {
-      let resp: Vec<String> = responses.iter().map(render).collect();
-      let body = resp.join("\n");
+      let body = render(&responses);
       let resp = warp::http::Response::builder()
         .status(200)
         .header("Content-Type", "text/plain;charset=UTF-8")
@@ -140,7 +176,7 @@ pub async fn index(conf: Arc<Context>) -> Result<impl Reply, reject::Rejection>
     },
     Err(err) => {
       let resp = warp::http::Response::builder()
-        .status(502)
+        .status(500)
         .header("Content-Type", "text/plain;charset=UTF-8")
         .body(err.to_string())
         .unwrap();
@@ -149,6 +185,20 @@ pub async fn index(conf: Arc<Context>) -> Result<impl Reply, reject::Rejection>
   }
 }
 
+pub async fn bad_request() -> Result<impl Reply, reject::Rejection> {
+  let resp = warp::http::Response::builder()
+    .status(400)
+    .header("Content-Type", "text/plain;charset=UTF-8")
+    .body("Invalid request".to_string())
+    .unwrap();
+  Ok(resp)
+}
+
 pub async fn not_found() -> Result<impl Reply, reject::Rejection> {
-  Ok(warp::redirect(uri::Uri::from_str("/").unwrap()))
+  let resp = warp::http::Response::builder()
+    .status(404)
+    .header("Content-Type", "text/plain;charset=UTF-8")
+    .body("Endpoint not found".to_string())
+    .unwrap();
+  Ok(resp)
 }

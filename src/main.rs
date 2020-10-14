@@ -22,9 +22,8 @@ fn web(m: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
     return Err("listen is not set.".into())
   };
 
-  let cfg = Arc::new(context::Context {
-    app_id: m.value_of("app_id").expect("app-id is not set.").to_string(),
-    locations: m.values_of("LOCATIONS").expect("location is not set.").map(|s| s.to_string()).collect(),
+  let ctx = Arc::new(context::Context {
+    app_id: m.value_of("app_id").unwrap_or("").to_string(),
     cache: RwLock::new(cascara::Cache::with_window_size(100, 20)),
   });
 
@@ -38,9 +37,19 @@ fn web(m: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
     .unwrap();
 
   rt.block_on(async move {
-    let index = move || handlers::index(cfg.clone());
-    let router = warp::path::end().and_then(index)
-      .or(warp::any().and_then(handlers::not_found));
+    let probe = warp::path::path("probe")
+      .and(warp::path::end())
+      .and(warp::query())
+      .and_then({
+        let ctx = ctx.clone();
+        move |p: handlers::ProbeParams| handlers::probe(ctx.clone(), p)
+      })
+      .or(warp::any().and_then(handlers::bad_request));
+    let index = warp::path::end().and_then(handlers::index);
+    let router =
+      probe
+        .or(index)
+        .or(warp::any().and_then(handlers::not_found));
     warp::serve(router)
       .run(sock)
       .await;
@@ -64,13 +73,7 @@ fn main() {
         .long("app-id")
         .takes_value(true)
         .allow_hyphen_values(true)
-        .required(true))
-      .arg(Arg::with_name("LOCATIONS")
-        .help("Name of locations. e.g.) Tokyo, London")
-        .index(1)
-        .takes_value(true)
-        .multiple(true)
-        .required(true)));
+        .required(false)));
   let m = app.get_matches();
   match m.subcommand_name() {
     Some("web") => {

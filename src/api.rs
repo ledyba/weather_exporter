@@ -13,15 +13,6 @@ use string_error::static_err;
 
 use crate::context::Context;
 
-pub async fn fetch_all(ctx: Arc<Context>) -> Result<Vec<Response>, Box<dyn std::error::Error>>
-{
-  let mut result = Vec::new();
-  for location in ctx.locations.iter() {
-    result.push(fetch(ctx.clone(), location.clone()).await?);
-  }
-  Ok(result)
-}
-
 #[derive(Debug)]
 pub struct FetchError {
   location: String,
@@ -30,7 +21,6 @@ pub struct FetchError {
 }
 
 impl std::error::Error for FetchError {
-
 }
 
 impl std::fmt::Display for FetchError {
@@ -39,11 +29,11 @@ impl std::fmt::Display for FetchError {
   }
 }
 
-pub async fn fetch(ctx: Arc<Context>, location: String) -> Result<Response, Box<dyn std::error::Error>> {
+pub async fn fetch(ctx: Arc<Context>, app_id: String, location: String) -> Result<Response, Box<dyn std::error::Error>> {
   if let Some(resp) = ctx.cache.read().unwrap().get(&location) {
     return Ok(resp.clone());
   }
-  let url = format!("https://api.openweathermap.org/data/2.5/weather?q={}&appid={}", location, ctx.app_id);
+  let url = format!("https://api.openweathermap.org/data/2.5/weather?q={}&appid={}", &location, &app_id);
   let body = reqwest::get(url.as_str())
     .await?
     .text()

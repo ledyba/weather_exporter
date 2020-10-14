@@ -9,7 +9,7 @@ services:
     build:
       context: ./
     restart: always
-    command: "web --listen '0.0.0.0:8080' --app-id '6f2bbbdbb606f96a81a30961e8cc0d61' 'Tokyo,JP' 'Saitama,JP' 'Kyoto,JP' 'Osaka,JP'"
+    command: "web --listen '0.0.0.0:8080'"
     expose:
       - '8080'
     networks:
