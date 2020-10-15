@@ -6,6 +6,7 @@
  *****************************************************************************/
 use std::process::exit;
 
+use log::{error};
 use clap::{App, Arg, SubCommand, ArgMatches};
 use warp::Filter;
 use std::str::FromStr;
@@ -56,6 +57,9 @@ fn web(m: &ArgMatches) -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn main() {
+  env_logger::init_from_env(
+    env_logger::Env::from(env_logger::Env::default())
+      .default_filter_or("info"));
   let app = App::new("weather_exporter")
     .version("0.1.0")
     .author("Kaede Fujisaki <psi@7io.org>")
@@ -76,12 +80,12 @@ fn main() {
   match m.subcommand_name() {
     Some("web") => {
       if let Err(err) = web(m.subcommand_matches("web").unwrap()) {
-        eprint!("Failed to start web: {:?}\n", err);
+        error!("Failed to start web: {:?}\n", err);
         exit(-1);
       }
     }
     None | Some(_) => {
-      eprint!("{}\n", m.usage());
+      error!("{}\n", m.usage());
       exit(-1);
     }
   }

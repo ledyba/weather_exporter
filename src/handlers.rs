@@ -5,6 +5,8 @@
  * Copyright 2020-, Kaede Fujisaki
  *****************************************************************************/
 
+use log::{info};
+
 extern crate serde;
 use serde::Deserialize;
 
@@ -163,6 +165,7 @@ pub async fn probe(ctx: Arc<Context>, params: ProbeParams) -> Result<impl Reply,
     return Ok(resp);
   }
   let location = params.location.unwrap().clone();
+  info!("Probe: app-id={} location={}", app_id.as_str(), location.as_str());
   let result = api::fetch(ctx.clone(), app_id, location).await;
   match result {
     Ok(responses) => {
