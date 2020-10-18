@@ -53,8 +53,8 @@ jobs:
         with:
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/certbot-with-dns_valuedomain:latest
-            ghcr.io/${{ github.repository_owner }}/certbot-with-dns_valuedomain:${{ steps.calc_tag.outputs.tag }}
-            ghcr.io/${{ github.repository_owner }}/certbot-with-dns_valuedomain:sha-${{ steps.calc_tag.outputs.sha }}
+            ghcr.io/${{ github.repository_owner }}/weather_exporter:latest
+            ghcr.io/${{ github.repository_owner }}/weather_exporter:${{ steps.calc_tag.outputs.tag }}
+            ghcr.io/${{ github.repository_owner }}/weather_exporter:sha-${{ steps.calc_tag.outputs.sha }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
