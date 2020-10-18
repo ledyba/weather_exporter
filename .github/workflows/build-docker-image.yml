@@ -53,8 +53,8 @@ jobs:
         with:
           push: true
           tags: |
-            ghcr.io/${{ github.github.repository }}:latest
-            ghcr.io/${{ github.github.repository }}:${{ steps.calc_tag.outputs.tag }}
-            ghcr.io/${{ github.github.repository }}:sha-${{ steps.calc_tag.outputs.sha }}
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ steps.calc_tag.outputs.tag }}
+            ghcr.io/${{ github.repository }}:sha-${{ steps.calc_tag.outputs.sha }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
